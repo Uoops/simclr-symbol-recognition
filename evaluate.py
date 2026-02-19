@@ -38,11 +38,12 @@ def knn_evaluate(train_embeddings, train_labels, test_embeddings, test_labels, k
 
 
 def few_shot_evaluate(model, data_dir, device="cuda", img_size=64,
-                      n_shots=1, k_neighbors=1, batch_size=128):
-    """Run a few-shot evaluation.
+                      n_shots=1, k_neighbors=1, batch_size=128, n_trials=10):
+    """Run a few-shot evaluation averaged over multiple trials.
 
     For each class, sample n_shots examples as the support set,
     then evaluate on the remaining examples (test set).
+    Repeats n_trials times and returns the mean accuracy.
     """
     eval_transform = get_eval_transform(img_size)
 
@@ -55,32 +56,35 @@ def few_shot_evaluate(model, data_dir, device="cuda", img_size=64,
     train_emb, train_labels = extract_embeddings(model, train_loader, device)
     test_emb, test_labels = extract_embeddings(model, test_loader, device)
 
-    # For few-shot: subsample n_shots per class from training set
     if n_shots > 0:
-        support_indices = []
-        for cls in np.unique(train_labels):
-            cls_indices = np.where(train_labels == cls)[0]
-            n = min(n_shots, len(cls_indices))
-            chosen = np.random.choice(cls_indices, size=n, replace=False)
-            support_indices.extend(chosen)
-        support_indices = np.array(support_indices)
-        support_emb = train_emb[support_indices]
-        support_labels = train_labels[support_indices]
+        accuracies = []
+        for _ in range(n_trials):
+            support_indices = []
+            for cls in np.unique(train_labels):
+                cls_indices = np.where(train_labels == cls)[0]
+                n = min(n_shots, len(cls_indices))
+                chosen = np.random.choice(cls_indices, size=n, replace=False)
+                support_indices.extend(chosen)
+            support_indices = np.array(support_indices)
+            support_emb = train_emb[support_indices]
+            support_labels = train_labels[support_indices]
+
+            acc, _ = knn_evaluate(
+                support_emb, support_labels, test_emb, test_labels, k=k_neighbors
+            )
+            accuracies.append(acc)
+        accuracy = np.mean(accuracies)
     else:
         support_emb = train_emb
         support_labels = train_labels
-
-    accuracy, predictions = knn_evaluate(
-        support_emb, support_labels, test_emb, test_labels, k=k_neighbors
-    )
+        accuracy, _ = knn_evaluate(
+            support_emb, support_labels, test_emb, test_labels, k=k_neighbors
+        )
 
     return {
         "accuracy": accuracy,
-        "predictions": predictions,
         "test_labels": test_labels,
         "test_embeddings": test_emb,
-        "train_embeddings": support_emb,
-        "train_labels": support_labels,
     }
 
 

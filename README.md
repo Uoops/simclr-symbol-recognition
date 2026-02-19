@@ -38,19 +38,21 @@ Given a dataset of engineering drawings annotated with 42 symbol classes (valves
 
 All experiments use: ResNet-18 backbone, img_size=224, batch_size=32, 50 epochs, out_dim=128.
 
+Accuracy is averaged over 10 random trials for stable results.
+
 | Experiment | Temperature | LR Scheduler | Weight Decay | Aug Strength | 1-shot | 5-shot | Full kNN-5 |
 |---|---|---|---|---|---|---|---|
-| baseline | 0.07 | cosine | 1e-4 | 1.0 | 78.5% | 89.4% | 99.3% |
-| high_temp | 0.5 | cosine | 1e-4 | 1.0 | 79.7% | 91.3% | 99.1% |
-| low_temp | 0.01 | cosine | 1e-4 | 1.0 | 77.8% | 87.5% | 99.3% |
-| strong_aug | 0.07 | cosine | 1e-4 | 1.5 | 77.6% | 86.8% | 99.3% |
-| no_scheduler | 0.07 | none | 1e-4 | 1.0 | **85.4%** | 89.2% | 99.3% |
-| high_wd | 0.07 | cosine | 1e-3 | 1.0 | 75.2% | 88.9% | 99.3% |
-| low_wd | 0.07 | cosine | 1e-5 | 1.0 | 80.2% | 90.6% | 99.3% |
+| baseline | 0.07 | cosine | 1e-4 | 1.0 | 81.4% | 89.2% | 99.3% |
+| high_temp | 0.5 | cosine | 1e-4 | 1.0 | 75.7% | 87.2% | 98.8% |
+| low_temp | 0.01 | cosine | 1e-4 | 1.0 | 78.5% | 89.2% | 99.3% |
+| strong_aug | 0.07 | cosine | 1e-4 | 1.5 | 74.5% | 89.5% | 99.3% |
+| no_scheduler | 0.07 | none | 1e-4 | 1.0 | 76.7% | 88.1% | 99.3% |
+| **high_wd** | 0.07 | cosine | 1e-3 | 1.0 | **82.3%** | **90.2%** | 99.3% |
+| low_wd | 0.07 | cosine | 1e-5 | 1.0 | 82.0% | 88.4% | 99.3% |
 
 ### What We Learned
 
-**Fine-tuning vs pretrained**: The pretrained STL10 model scores 35.6% on 1-shot. Fine-tuning improves this to 85.4% (+42 points), confirming that domain-specific contrastive learning is essential.
+**Fine-tuning vs pretrained**: The pretrained STL10 model scores 46.9% on 1-shot. Fine-tuning improves this to 82.3% (+34 points), confirming that domain-specific contrastive learning is essential.
 
 ## Project Structure
 
