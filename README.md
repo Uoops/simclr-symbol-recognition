@@ -32,6 +32,7 @@ Given a dataset of engineering drawings annotated with 42 symbol classes (valves
 - 42 symbol classes (e.g., `24V-power-cord`, `smoke-detector`, `sprinkler-upright`)
 - Highly imbalanced: most common class has 940 samples, rarest has 4
 - Crops are extracted from full drawing images using COCO bounding box annotations with 10% padding
+- Dataset source: [Firefighting Device Detection on Roboflow](https://universe.roboflow.com/yaid-pzikt/firefighting-device-detection/dataset/6)
 
 ## Experiments
 
