@@ -1,0 +1,3 @@
+[submodule "SimCLR"]
+	path = SimCLR
+	url = https://github.com/sthalles/SimCLR.git
